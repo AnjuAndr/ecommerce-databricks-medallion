@@ -46,7 +46,7 @@ Pytest-based data validations are included to ensure:
 ----------------------------------------------------------------------------------------
 
 ## Repository Structure
-ecommerce-databricks-medallion/
+```ecommerce-databricks-medallion/
 ├── notebooks/
 │   ├── 01_bronze_ingestion.py
 │   ├── 02_silver_customers_products.py
@@ -56,6 +56,7 @@ ecommerce-databricks-medallion/
 ├── tests/
 │   └── tests_pytest_validations.py
 └── README.md
-
+```
 
 -----------------------------------------------------------------------------------------
+
