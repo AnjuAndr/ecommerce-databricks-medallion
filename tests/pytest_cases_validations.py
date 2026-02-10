@@ -59,7 +59,7 @@ def test_silver_customers_single_current_record():
 
 # COMMAND ----------
 
-#Test 3 : SCD control columns must be populated
+#Test 4 : SCD control columns must be populated
 
 def test_silver_customers_scd_columns_not_null():
     df = spark.table("silver.customers_enriched")
@@ -91,7 +91,7 @@ def test_negative_customer_without_current_record():
 
 # COMMAND ----------
 
-#Test 4 - product_id must be unique
+#Test 5 - product_id must be unique
 def test_silver_products_unique_product_id():
     df = spark.table("silver.products_enriched")
 
@@ -126,7 +126,7 @@ def test_negative_product_price():
 
 # COMMAND ----------
 
-#Test 5 : Business Keys must not be NULL
+#Test 6 : Business Keys must not be NULL
 def test_silver_orders_business_keys_not_null():
     df = spark.table("silver.orders_enriched")
 
@@ -138,7 +138,7 @@ def test_silver_orders_business_keys_not_null():
 
 # COMMAND ----------
 
-#Test 6 - Orders must be deduplicated by row_id
+#Test 7 - Orders must be deduplicated by row_id
 def test_siver_orders_no_duplicate_row_id():
     df = spark.table("silver.orders_enriched")
 
@@ -153,7 +153,7 @@ def test_siver_orders_no_duplicate_row_id():
 
 # COMMAND ----------
 
-#Test 7 - UNKNOWN handling enforced
+#Test 8 - UNKNOWN handling enforced
 def test_silver_orders_unknown_handling():
     df = spark.table("silver.orders_enriched")
 
@@ -184,7 +184,7 @@ def test_negative_order_quantity():
 
 # COMMAND ----------
 
-#Test 8 - Gold profit reconciles with Silver
+#Test 9 - Gold profit reconciles with Silver
 def test_gold_profit_reconciliation_with_silver():
     silver_profit = (
         spark.table("silver.orders_enriched")
@@ -203,7 +203,7 @@ def test_gold_profit_reconciliation_with_silver():
 
 # COMMAND ----------
 
-#Test 9 - Gold dimensions must not be NULL
+#Test 10 - Gold dimensions must not be NULL
 def test_gold_no_null_dimensions():
     df = spark.table("gold.profit_aggregated")
 
@@ -216,11 +216,15 @@ def test_gold_no_null_dimensions():
 # COMMAND ----------
 
 #Negative Test - FAIL if aggregation grain is broken
-def test_silver_orders_unknown_handling():
-    df = spark.table("silver.orders_enriched")
+def test_gold_profit_grain_uniqueness():
+    df = spark.table("gold.profit_aggregated")
 
-    assert df.filter(col("customer_name").isNull()).count() == 0, \
-        "NULL customer_name found — UNKNOWN handling failed"
+    duplicates = (
+        df.groupBy("customer_name", "order_year")
+          .count()
+          .filter(col("count") > 1)
+          .count()
+    )
 
-    assert df.filter(col("category").isNull()).count() == 0, \
-        "NULL category found — UNKNOWN handling failed"
+    assert duplicates == 0, \
+        "Gold aggregation grain violated : duplicate dimension combinations found"
