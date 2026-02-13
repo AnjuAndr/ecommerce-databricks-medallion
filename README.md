@@ -36,12 +36,12 @@ The following analytical queries are implemented using SQL:
 ---------------------------------------------------------------------------------------
 
 ## Data Quality & Testing
-Pytest-based data validations are included to ensure:
-- Source-to-Bronze reconciliation
-- SCD integrity (single active customer record)
-- Fact deduplication and business key enforcement
-- Handling of orphan dimension references using `UNKNOWN`
-- Profit reconciliation between Silver and Gold layers
+
+- Unit tests implemented using pytest with Spark fixtures and DataFrame-based testing
+- Integration tests validate Silver and Gold layer correctness
+- Business reconciliation tests ensure metric consistency across layers
+
+Tests are located under `/tests` and are designed to follow data engineering testing best practices.
 
 ----------------------------------------------------------------------------------------
 
@@ -59,4 +59,5 @@ Pytest-based data validations are included to ensure:
 ```
 
 -----------------------------------------------------------------------------------------
+
 
